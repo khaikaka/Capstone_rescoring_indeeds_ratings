@@ -13,4 +13,4 @@ def create_bucket(bucket_name):
 
 if __name__=="__main__":
     s3=boto3.client("s3")
-    create_bucket('capstone_raw_data')
+    create_bucket('capstone_raw_data_ha_galvanize')
