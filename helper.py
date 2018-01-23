@@ -226,7 +226,7 @@ def export_data_to_csv(df, company, topic):
 
 def upload_data(file_name, new_name):
     s3 = boto3.resource('s3')
-    bucket_name = "capstone_raw_data"
+    bucket_name = "capstone_raw_data_ha_galvanize"
     try:
         s3.meta.client.upload_file(file_name, bucket_name, new_name)
 
