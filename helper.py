@@ -6,12 +6,16 @@ import numpy as np
 import pandas as pd
 from collections import OrderedDict
 from random import randint
+import boto3
+
+s3 = boto3.resource('s3')
 
 def main_scraping_function(company):
     all_link_lst, work_life_balance_lst, pay_benefit_lst, job_secured_lst, management_lst, culture_lst = get_links(company)
     try:
         all_data = create_topic_data(company, all_link_lst)
         export_data_to_csv(convert_to_dataframe(all_data), company, 'all')
+
     except:
         print('error at {0} with {1}'.format(company, 'all'))
 
@@ -46,7 +50,7 @@ def main_scraping_function(company):
         print('error at {0} with {1}'.format(company, 'cul'))
 
 
-        
+
 def create_topic_data(company, links_lst):
     company_dict     = {}
     content_dict     = {}
@@ -215,4 +219,16 @@ def convert_to_dataframe(company_dict):
 
 def export_data_to_csv(df, company, topic):
     file_name = '/Users/hatran/project/galvanize/capstone/data/' + company + '_' + topic + '_data.csv'
+    new_name = company + '_' + topic + '_data.csv'
+    upload_data(file_name, new_name)
     df.to_csv(file_name)
+
+
+def upload_data(file_name, new_name):
+    s3 = boto3.resource('s3')
+    bucket_name = "capstone_raw_data"
+    try:
+        s3.meta.client.upload_file(file_name, bucket_name, new_name)
+
+    except Exception as e:
+        print(e)  # Note: BucketAlreadyOwnedByYou means you already created the bucket.
