@@ -204,6 +204,7 @@ def get_reviews_score(browser):
             management.append(score.get_attribute('style'))
         elif index%6==5:
             culture.append(score.get_attribute('style'))
+    return overalls, balances, benefits, security, management, culture
 
 def convert_to_dataframe(company_dict):
     len_lst = []
@@ -220,7 +221,6 @@ def convert_to_dataframe(company_dict):
 def export_data_to_csv(df, company, topic):
     file_name = '/Users/hatran/project/galvanize/capstone/data/' + company + '_' + topic + '_data.csv'
     new_name = company + '_' + topic + '_data.csv'
-    upload_data(file_name, new_name)
     df.to_csv(file_name)
 
 
