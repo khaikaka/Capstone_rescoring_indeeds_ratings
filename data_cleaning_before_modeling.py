@@ -3,6 +3,7 @@ from US_cities_states_library import US_cities_states
 
 def main_cleaning_function(df):
     df = remove_duplicates(df)
+    df = shift_null_review(df)
     df = job_titles_cleaning(df)
     df = locations_cleaning(df)
     df = former_current_numeric(df)
@@ -159,9 +160,17 @@ def scores_cleaning(df):
         df[new_var] = df[old_var].str.split(':').str[1]
         df[new_var] = df[new_var].map(lambda x: x[:-2])
         df[new_var] = df[new_var].map(lambda x: int(int(x)/20))
+        for idx, row in df.iterrows():
+            if row[new_var] == 0:
+                row[new_var] = row['overall_sc']
     df = df.drop(columns = ['overall_scores',
        'balance_scores', 'benefit_scores', 'security_scores',
        'management_scores', 'culture_scores'], axis=1)
+    for col in ['overall_sc',
+       'balance_sc', 'benefit_sc', 'security_sc',
+       'management_sc', 'culture_sc']:
+        df = pd.concat([df, pd.get_dummies(df[col], prefix=col)], axis=1)
+        df = df.drop(columns=[col], axis=1)
     return df
 
 def dates_cleaning(df):
@@ -215,6 +224,29 @@ def state_extra_cleaning(df):
     return df
 
 def company_name_cleaning(df):
-    df = pd.concat([df, pd.get_dummies(df['company_name'])], axis=1)
-    df = df.drop(columns=['company_name'], axis=1)
+#     df = pd.concat([df, pd.get_dummies(df['company_name'])], axis=1)
+#     df = df.drop(columns=['company_name'], axis=1)
+     return df
+
+def check_null(df):
+    return list(df['user_ids'][pd.isnull(df['text_reviews'])])
+
+def insert_null_text(df, uid):
+    for idx, row in df.iterrows():
+        if row['user_ids'] == uid:
+            upper = df[:idx]
+            lower = df[idx:]
+            lower.text_reviews = lower.text_reviews.shift(-1)
+            lower = lower[:-1]
+    df = pd.concat([upper,lower], axis=0)
+    return df
+
+def shift_null_review(df):
+    lst_null = check_null(df)
+    formal_lst = lst_null
+    i = 0
+    while i < len(formal_lst):
+        df = insert_null_text(df, lst_null[0])
+        lst_null = check_null(df)
+        i += 1
     return df
