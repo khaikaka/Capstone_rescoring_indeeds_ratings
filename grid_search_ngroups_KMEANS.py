@@ -1,7 +1,7 @@
 from sklearn.linear_model import LogisticRegression
 import pandas as pd
 import numpy as np
-from sklearn.cluster import KMeans
+from sklearn.cluster import k_means
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from nltk.tokenize import word_tokenize
 from nltk.stem import SnowballStemmer
@@ -12,6 +12,9 @@ from data_cleaning_before_modeling import *
 from sklearn.model_selection import train_test_split
 from extra_cleaning_obj1 import *
 import itertools
+import matplotlib.pyplot as plt
+%matplotlib inline
+from sklearn.metrics import silhouette_score, silhouette_samples
 
 
 def prepare_data_for_KMEANS(data_path):
@@ -24,34 +27,23 @@ def prepare_data_for_KMEANS(data_path):
     data = data.drop(columns=['user_ids', 'review_titles', 'text_reviews', 'position', 'city'], axis=1)
 
     Text = data['all_text']
-    vectorizer = TfidfVectorizer(stop_words='english', tokenizer=tokenize, max_features= 1000)
+    vectorizer = CountVectorizer(stop_words='english', tokenizer=tokenize, max_features= 1000)
     vector = vectorizer.fit_transform(Text).todense()
 
     return vector
 
 
-def grid_search_KMEANS(data_path, max_n_grp = 20):
+def silhouette(X):
+    sil_dict = {}
+    for no_k in range(2,20):
+        model = KMeans(n_clusters=no_k)
+        y_pred = model.fit(X)
+        Yhat = y_pred.labels_.reshape(-1,1)
+        sil = silhouette_score(X,Yhat)
+        sil_dict[no_k] = sil
+    return sil_dict
 
-    vector = prepare_data_for_KMEANS(data_path)
-
-    maxk = max_n_grp
-    wcss = np.zeros(maxk)
-    silhouette = np.zeros(maxk)
-
-
-# flatten
-
-    for k in range(1,maxk):
-        km = KMeans(k)
-        y = km.fit_predict(vector)
-
-
-    for c in range(0, k):
-        for i1, i2 in itertools.combinations([ i for i in range(len(y)) if y[i] == c ], 2):
-            wcss[k] += sum(vector[i1] - vector[i2])**2
-    wcss[k] /= 2
-
-    fig, ax = plt.subplots()
-    ax.plot(range(3,maxk), wcss[3:maxk], 'o-')
-    ax.set_xlabel("number of clusters")
-    ax.set_ylabel("within-cluster sum of squares")
+if __name__ == '__main__':
+    vector = prepare_data_for_KMEANS('data/Google_data.csv')
+    sil = silhouette(vector)
+    plt.scatter(list(sil.keys()),list(sil.values()))
