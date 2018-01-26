@@ -58,35 +58,35 @@ def with_text_score(date):
         data['num_pos_score'] = 0
 
 
-        sentiment_score = data['all_text']
+
         for idx, row in data.iterrows():
             text_score = sentiment_scores(row['all_text'])
-            df.ix[idx, 'text_neg_score'] = text_score['neg']
-            df.ix[idx, 'text_neu_score'] = text_score['neu']
-            df.ix[idx, 'text_pos_score'] = text_score['pos']
+            data.ix[idx, 'text_neg_score'] = text_score['neg']
+            data.ix[idx, 'text_neu_score'] = text_score['neu']
+            data.ix[idx, 'text_pos_score'] = text_score['pos']
         col = v + '_sc'
         for idx, row in data.iterrows():
             if row[col] == 1:
-                df.ix[idx, 'num_neg_score'] = 1
+                data.ix[idx, 'num_neg_score'] = 1
             elif row[col] == 2:
-                df.ix[idx, 'num_neg_score'] = 0.5
-                df.ix[idx, 'num_neu_score'] = 0.5
+                data.ix[idx, 'num_neg_score'] = 0.5
+                data.ix[idx, 'num_neu_score'] = 0.5
             elif row[col] == 3:
-                df.ix[idx, 'num_neu_score'] = 1
+                data.ix[idx, 'num_neu_score'] = 1
             elif row[col] == 4:
-                df.ix[idx, 'num_neu_score'] = 0.5
-                df.ix[idx, 'num_pos_score'] = 0.5
+                data.ix[idx, 'num_neu_score'] = 0.5
+                data.ix[idx, 'num_pos_score'] = 0.5
             elif row[col] == 5:
-                df.ix[idx, 'num_pos_score'] = 1
+                data.ix[idx, 'num_pos_score'] = 1
 
         final_score = 'final_' + k + '_sc'
 
-        df[final_score] = -1*((data['text_neg_score'] + data['num_neg_score'])/2)  + \
+        data[final_score] = -1*((data['text_neg_score'] + data['num_neg_score'])/2)  + \
                               0*((data['text_neu_score'] + data['num_neu_score'])/2)  + \
                               1*((data['text_pos_score'] + data['num_pos_score'])/2)
 
         file_out = 'sentiment_data/sentiment_' + k + '_' + date + '.csv'
-        df.to_csv(file_out)
+        data.to_csv(file_out)
 
 
 
