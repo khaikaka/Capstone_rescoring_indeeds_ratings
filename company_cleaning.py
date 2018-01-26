@@ -26,6 +26,8 @@ def export_data_to_csv(data_path, company, topic, uid):
     new_name = company + '_' + topic + '_data.csv'
     df.to_csv(file_name)
 
+
+
 if __name__ == '__main__':
     uid = 'cmp-review-bd6178c41f6dc094'
     data_path = 'data/Google_data.csv'
