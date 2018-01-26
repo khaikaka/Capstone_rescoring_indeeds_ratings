@@ -16,7 +16,7 @@ def main_cleaning_function(df):
 
 def remove_duplicates(df):
     df1 = df.drop(columns=['Unnamed: 0'], axis=1)
-    return df1.drop_duplicates(subset = ['user_ids','review_titles'],keep ='first')
+    return df1.drop_duplicates()
 
 def job_titles_cleaning(df):
     df['position'] = df.job_titles.str.split('(').str[0]
@@ -163,14 +163,14 @@ def scores_cleaning(df):
         for idx, row in df.iterrows():
             if row[new_var] == 0:
                 row[new_var] = row['overall_sc']
-    df = df.drop(columns = ['overall_scores',
-       'balance_scores', 'benefit_scores', 'security_scores',
-       'management_scores', 'culture_scores'], axis=1)
-    for col in ['overall_sc',
-       'balance_sc', 'benefit_sc', 'security_sc',
-       'management_sc', 'culture_sc']:
-        df = pd.concat([df, pd.get_dummies(df[col], prefix=col)], axis=1)
-        df = df.drop(columns=[col], axis=1)
+    # df = df.drop(columns = ['overall_scores',
+    #    'balance_scores', 'benefit_scores', 'security_scores',
+    #    'management_scores', 'culture_scores'], axis=1)
+    # for col in ['overall_sc',
+    #    'balance_sc', 'benefit_sc', 'security_sc',
+    #    'management_sc', 'culture_sc']:
+    #     df = pd.concat([df, pd.get_dummies(df[col], prefix=col)], axis=1)
+    #     df = df.drop(columns=[col], axis=1)
     return df
 
 def dates_cleaning(df):
