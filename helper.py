@@ -119,10 +119,10 @@ def get_links(company):
     management_lst        = []
     culture_lst           = []
 
-    all_tail_string = ['?lang=en'] + ['?start=' + str(i) + '&lang=en' for i in list(np.arange(1,50)*25)]
+    all_tail_string = ['?lang=en'] + ['?start=' + str(i) + '&lang=en' for i in list(np.arange(1,500)*20)]
     all_link_lst = ['https://www.indeed.com/cmp/' + company + '/reviews' + i for i in all_tail_string]
 
-    topic_tail_string = ['&lang=en'] + ['&start=' + str(i) + '&lang=en' for i in list(np.arange(1,15))]
+    topic_tail_string = ['&lang=en'] + ['&start=' + str(i) + '&lang=en' for i in list(np.arange(1,250))]
 
     work_life_balance_lst = ['https://www.indeed.com/cmp/' + company + '/reviews?ftopic=wlbalance' + i for i in topic_tail_string]
 
