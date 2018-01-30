@@ -15,42 +15,61 @@ from sklearn.linear_model import RidgeClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import log_loss
+from extra_cleaning_obj1 import *
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+import statsmodels.formula.api as sm
+import pickle
+from sklearn.metrics import f1_score, accuracy_score, precision_score
+from sklearn.metrics import recall_score, roc_curve, roc_auc_score
+
+
 
 
 def logistic_regression_model(data_path):
     X_no_text_train, X_no_text_test, y_no_text_train, y_no_text_test, \
            X_with_text_train, X_with_text_test, y_with_text_train, y_with_text_test = \
-                train_test_data_splitting_after_KMeans_logistic(data_path, n_groups=6)
+                train_test_data_splitting_after_KMeans_logistic_sub(data_path, n_groups=6)
+
+    X_no_text_train = X_no_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_no_text_test = X_no_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_train = X_with_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_test = X_with_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+
     model1 = LogisticRegression()
     model2 = LogisticRegression()
     model1.fit(X_no_text_train,y_no_text_train)
     no_text_model_score = model1.score(X_no_text_test, y_no_text_test)
     model2.fit(X_with_text_train,y_with_text_train)
     text_model_score = model2.score(X_with_text_test,y_with_text_test)
-    print('Accuracy Score of the model without text_logistic regression: {}'.format(no_text_model_score))
-    print('Accuracy Score of the model with text_logistic regression: {}'.format(text_model_score))
+    y_pred_no_text = model1.predict_proba(X_no_text_test)
+    y_pred_with_text = model2.predict_proba(X_with_text_test)
 
-def ridge_regression_model(data_path):
-    X_no_text_train, X_no_text_test, y_no_text_train, y_no_text_test, \
-           X_with_text_train, X_with_text_test, y_with_text_train, y_with_text_test = \
-                train_test_data_splitting_after_KMeans_sub(data_path, n_groups=6)
-    model1 = RidgeClassifier(alpha=0.1)
-    model2 = RidgeClassifier(alpha=0.1)
-    model1.fit(X_no_text_train,y_no_text_train)
-    no_text_model_score = model1.score(X_no_text_test, y_no_text_test)
-    model2.fit(X_with_text_train,y_with_text_train)
-    text_model_score = model2.score(X_with_text_test,y_with_text_test)
-    y_pred_no_text = model1.predict(X_no_text_test)
-    y_pred_with_text = model2.predict(X_with_text_test)
-    print('Accuracy Score of the model without text_RidgeRegression: {}'.format(no_text_model_score))
-    print('Accuracy Score of the model with text_RidgeRegression: {}'.format(text_model_score))
-    print('Log loss of the model with text_RidgeRegression: {}'.format(log_loss(y_no_text_test, y_pred_no_text)))
-    print('Log loss of the model with text_RidgeRegression: {}'.format(log_loss(y_with_text_test, y_pred_with_text)))
+    print('-------LOGISTIC REGRESSION-------')
+    print('Accuracy Score of the model without text_LogisticRegression: {}'.format(no_text_model_score))
+    print('Accuracy Score of the model with text_LogisticRegression: {}'.format(text_model_score))
+    print('Log loss of the model without text_LogisticRegression: {}'.format(log_loss(y_no_text_test, y_pred_no_text)))
+    print('Log loss of the model with text_LogisticRegression: {}'.format(log_loss(y_with_text_test, y_pred_with_text)))
+    print('f1_score of the model without textLogisticRegression: {}'.format(f1_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('f1_score of the model text_LogisticRegression: {}'.format(f1_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('precision_score of the model without text_LogisticRegression: {}'.format(precision_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('precision_score of the model text_LogisticRegression: {}'.format(precision_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('recall_score of the model without text_LogisticRegression: {}'.format(recall_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('recall_score of the model text_LogisticRegression: {}'.format(recall_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('roc_auc_score of the model without text_LogisticRegression: {}'.format(roc_auc_score(y_no_text_test, y_pred_no_text[:,1].reshape(-1,1))))
+    print('roc_auc_score of the model text_LogisticRegression: {}'.format(roc_auc_score(y_with_text_test, y_pred_with_text[:,1].reshape(-1,1))))
+
+
 
 def gradient_boosted_model(data_path):
     X_no_text_train, X_no_text_test, y_no_text_train, y_no_text_test, \
            X_with_text_train, X_with_text_test, y_with_text_train, y_with_text_test = \
                 train_test_data_splitting_after_KMeans_sub(data_path,  n_groups=6)
+
+    X_no_text_train = X_no_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_no_text_test = X_no_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_train = X_with_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_test = X_with_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
 
     model = GradientBoostingClassifier(learning_rate=0.001, subsample=0.5, n_estimators=1000)
     parameter_grid = {'max_depth': [2,3,4,5,6]}
@@ -68,15 +87,137 @@ def gradient_boosted_model(data_path):
     text_model_score = model2.score(X_with_text_test,y_with_text_test)
 
 
+    print('-------GRADIENT BOOSTED-------')
     print('Accuracy Score of the model without text_GradientBoosted: {}'.format(no_text_model_score))
     print('Accuracy Score of the model with text_GradientBoosted: {}'.format(text_model_score))
     print('Log loss of the model without text_GradientBoosted: {}'.format(log_loss(y_no_text_test, y_pred_no_text)))
     print('Log loss of the model with text_GradientBoosted: {}'.format(log_loss(y_with_text_test, y_pred_with_text)))
+    print('f1_score of the model without text_GradientBoosted: {}'.format(f1_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('f1_score of the model text_GradientBoosted: {}'.format(f1_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('precision_score of the model without text_GradientBoosted: {}'.format(precision_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('precision_score of the model text_GradientBoosted: {}'.format(precision_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('recall_score of the model without text_GradientBoosted: {}'.format(recall_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('recall_score of the model text_GradientBoosted: {}'.format(recall_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('roc_auc_score of the model without text_GradientBoosted: {}'.format(roc_auc_score(y_no_text_test, y_pred_no_text[:,1].reshape(-1,1))))
+    print('roc_auc_score of the model text_GradientBoosted: {}'.format(roc_auc_score(y_with_text_test, y_pred_with_text[:,1].reshape(-1,1))))
 
+
+    return model2
+
+def random_forest_model(data_path):
+    X_no_text_train, X_no_text_test, y_no_text_train, y_no_text_test, \
+           X_with_text_train, X_with_text_test, y_with_text_train, y_with_text_test = \
+                train_test_data_splitting_after_KMeans_sub(data_path,  n_groups=6)
+
+    X_no_text_train = X_no_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_no_text_test = X_no_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_train = X_with_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_test = X_with_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+
+    model1 = RandomForestClassifier(max_depth=5, min_samples_split=3, n_jobs=-1)
+    model2 = RandomForestClassifier(max_depth=5, min_samples_split=3, n_jobs=-1)
+
+    model1.fit(X_no_text_train,y_no_text_train)
+    model2.fit(X_with_text_train,y_with_text_train)
+    y_pred_no_text = model1.predict_proba(X_no_text_test)
+    y_pred_with_text = model2.predict_proba(X_with_text_test)
+    no_text_model_score = model1.score(X_no_text_test, y_no_text_test)
+    text_model_score = model2.score(X_with_text_test,y_with_text_test)
+
+
+    print('-------RANDOM FOREST-------')
+    print('Accuracy Score of the model without text_RandomForest: {}'.format(no_text_model_score))
+    print('Accuracy Score of the model with text_RandomForest: {}'.format(text_model_score))
+    print('Log loss of the model without text_RandomForest: {}'.format(log_loss(y_no_text_test, y_pred_no_text)))
+    print('Log loss of the model with text_RandomForest: {}'.format(log_loss(y_with_text_test, y_pred_with_text)))
+    print('f1_score of the model without text_RandomForest: {}'.format(f1_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('f1_score of the model text_RandomForest: {}'.format(f1_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('precision_score of the model without text_RandomForest: {}'.format(precision_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('precision_score of the model text_RandomForest: {}'.format(precision_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('recall_score of the model without text_RandomForest: {}'.format(recall_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('recall_score of the model text_RandomForest: {}'.format(recall_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('roc_auc_score of the model without text_RandomForest: {}'.format(roc_auc_score(y_no_text_test, y_pred_no_text[:,1].reshape(-1,1))))
+    print('roc_auc_score of the model text_RandomForest: {}'.format(roc_auc_score(y_with_text_test, y_pred_with_text[:,1].reshape(-1,1))))
+
+def decision_tree_model(data_path):
+    X_no_text_train, X_no_text_test, y_no_text_train, y_no_text_test, \
+           X_with_text_train, X_with_text_test, y_with_text_train, y_with_text_test = \
+                train_test_data_splitting_after_KMeans_sub(data_path,  n_groups=6)
+
+    X_no_text_train = X_no_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_no_text_test = X_no_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_train = X_with_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_test = X_with_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+
+    model1 = DecisionTreeClassifier(max_depth=4, min_samples_split=3)
+    model2 = DecisionTreeClassifier(max_depth=4, min_samples_split=3)
+
+    model1.fit(X_no_text_train,y_no_text_train)
+    model2.fit(X_with_text_train,y_with_text_train)
+    y_pred_no_text = model1.predict_proba(X_no_text_test)
+    y_pred_with_text = model2.predict_proba(X_with_text_test)
+    no_text_model_score = model1.score(X_no_text_test, y_no_text_test)
+    text_model_score = model2.score(X_with_text_test,y_with_text_test)
+
+
+    print('-------DECISION TREE-------')
+    print('Accuracy Score of the model without text_DecisionTree: {}'.format(no_text_model_score))
+    print('Accuracy Score of the model with text_DecisionTree: {}'.format(text_model_score))
+    print('Log loss of the model without text_DecisionTree: {}'.format(log_loss(y_no_text_test, y_pred_no_text)))
+    print('Log loss of the model with text_DecisionTree: {}'.format(log_loss(y_with_text_test, y_pred_with_text)))
+    print('f1_score of the model without text_DecisionTree: {}'.format(f1_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('f1_score of the model text_DecisionTree: {}'.format(f1_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('precision_score of the model without text_DecisionTree: {}'.format(precision_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('precision_score of the model text_DecisionTree: {}'.format(precision_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('recall_score of the model without text_DecisionTree: {}'.format(recall_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('recall_score of the model text_DecisionTree: {}'.format(recall_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('roc_auc_score of the model without text_DecisionTree: {}'.format(roc_auc_score(y_no_text_test, y_pred_no_text[:,1].reshape(-1,1))))
+    print('roc_auc_score of the model text_DecisionTree: {}'.format(roc_auc_score(y_with_text_test, y_pred_with_text[:,1].reshape(-1,1))))
+
+
+
+
+def explore_logistic_regression(data_path):
+    X_no_text_train, X_no_text_test, y_no_text_train, y_no_text_test, \
+           X_with_text_train, X_with_text_test, y_with_text_train, y_with_text_test = \
+                train_test_data_splitting_after_KMeans_sub(data_path,  n_groups=6)
+
+    X_no_text_train = X_no_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_no_text_test = X_no_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_train = X_with_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_test = X_with_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+
+    X_no_text = pd.concat([X_no_text_test, X_no_text_train], axis = 0)
+    X_with_text = pd.concat([X_with_text_test, X_with_text_train], axis = 0)
+    y_no_text = pd.concat([y_no_text_test, y_no_text_train], axis = 0)
+    y_with_text = pd.concat([y_with_text_test, y_with_text_train], axis = 0)
+
+
+    model1 = sm.Logit(y_no_text, X_no_text)
+    model2 = sm.Logit(y_with_text, X_with_text)
+    result1= model1.fit()
+    result2= model2.fit()
+    print('No text')
+    print(result1.summary())
+    print('-------------------------------')
+    print('With text')
+    print(result2.summary())
 
 if __name__ == '__main__':
-    data_path = 'data/Microsoft_all_data.csv'
-    #logistic_regression_model(data_path)
-    #ridge_regression_model(data_path)
-    gradient_boosted_model(data_path)
-    ridge_regression_model(data_path)
+    data_path = 'temp_data/Jan25_data.csv'
+    i = 0
+    #explore_logistic_regression(data_path)
+    while i <100:
+        print('-------------------------------')
+        print('Model number {}'.format(i+1))
+        logistic_regression_model(data_path)
+        # gbcmodel = gradient_boosted_model(data_path)
+        #print(len(pd.read_csv(data_path)))
+        gradient_boosted_model(data_path)
+        # with open('website/gbcmodel.pkl', 'wb') as f:
+        #     pickle.dump(gbcmodel, f)
+        random_forest_model(data_path)
+        decision_tree_model(data_path)
+        print('-------------------------------')
+        print('-------------------------------')
+        i += 1
