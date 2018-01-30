@@ -2,7 +2,7 @@ import boto3
 
 def upload_data(file_name):
     s3 = boto3.resource('s3')
-    bucket_name = "capstone_raw_data_ha_galvanize"
+    bucket_name = "ha-galvanize-test"
     try:
         s3.meta.client.upload_file(file_name, bucket_name, file_name)
 
