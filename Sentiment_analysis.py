@@ -41,13 +41,13 @@ def with_text_score(date):
     for k, v in data_dict.items():
         data_path = 'temp_data/full_' + k + date + '.csv'
         data = pd.read_csv(data_path)
-        data = main_cleaning_function(data)
-        data['text_reviews'][data['text_reviews'].isnull()] = ''
-        data['former_current'][data['former_current'].isnull()] = 1
-
-        data['all_text'] = data['review_titles'] + data['text_reviews']
-        data['all_text'][data['all_text'].isnull()] = ''
-        data = data.drop(columns=['Unnamed: 0.1','user_ids', 'review_titles', 'text_reviews', 'position', 'city'], axis=1)
+        # data = main_cleaning_function(data)
+        # data['text_reviews'][data['text_reviews'].isnull()] = ''
+        # data['former_current'][data['former_current'].isnull()] = 1
+        #
+        # data['all_text'] = data['review_titles'] + data['text_reviews']
+        # data['all_text'][data['all_text'].isnull()] = ''
+        # data = data.drop(columns=['Unnamed: 0.1','user_ids', 'review_titles', 'text_reviews', 'position', 'city'], axis=1)
 
         data['text_neg_score'] = 0
         data['text_neu_score'] = 0
@@ -92,5 +92,5 @@ def with_text_score(date):
 
 
 if __name__ == '__main__':
-    date = 'Feb26'
+    date = 'Jan29'
     with_text_score(date)
