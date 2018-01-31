@@ -104,7 +104,7 @@ def position_cleaning(df):
     engineer = ['engineer', 'developer', 'tech', 'scientist', 'code']
     research = ['r&d', 'research', 'lab', 'science']
     data = ['data', 'analyst']
-    contract = ['contract', 'intern', 'free', 'student', 'volunteer', 'fellow', 'trainee']
+    contract = ['contract','temp', 'intern', 'free', 'student', 'volunteer', 'fellow', 'trainee']
     support = ['driver', 'cook', 'food', 'cater', 'valet']
     assist = ['assist', 'agent', 'scanner', 'tech', 'associate', 'clerk']
     speacialist = ['specialist', 'operator', 'strategist', 'coordinator', 'designer', \
@@ -133,6 +133,10 @@ def position_cleaning(df):
         for c in contract:
             if c in row['position'].lower():
                 df.ix[idx, 'contract'] = 1
+        for c in contract:
+            if pd.isnull(row['text_reviews']) == False:
+                if c in row['text_reviews'].lower():
+                    df.ix[idx, 'contract'] = 1
         for s in support:
             if s in row['position'].lower():
                 df.ix[idx, 'support'] = 1
@@ -163,14 +167,14 @@ def scores_cleaning(df):
         for idx, row in df.iterrows():
             if row[new_var] == 0:
                 row[new_var] = row['overall_sc']
-    # df = df.drop(columns = ['overall_scores',
-    #    'balance_scores', 'benefit_scores', 'security_scores',
-    #    'management_scores', 'culture_scores'], axis=1)
-    # for col in ['overall_sc',
-    #    'balance_sc', 'benefit_sc', 'security_sc',
-    #    'management_sc', 'culture_sc']:
-    #     df = pd.concat([df, pd.get_dummies(df[col], prefix=col)], axis=1)
-    #     df = df.drop(columns=[col], axis=1)
+    df = df.drop(columns = ['overall_scores',
+       'balance_scores', 'benefit_scores', 'security_scores',
+       'management_scores', 'culture_scores'], axis=1)
+    for col in ['overall_sc',
+       'balance_sc', 'benefit_sc', 'security_sc',
+       'management_sc', 'culture_sc']:
+        df = pd.concat([df, pd.get_dummies(df[col], prefix=col)], axis=1)
+        df = df.drop(columns=[col], axis=1)
     return df
 
 def dates_cleaning(df):
@@ -224,9 +228,9 @@ def state_extra_cleaning(df):
     return df
 
 def company_name_cleaning(df):
-#     df = pd.concat([df, pd.get_dummies(df['company_name'])], axis=1)
-#     df = df.drop(columns=['company_name'], axis=1)
-     return df
+    # df = pd.concat([df, pd.get_dummies(df['company_name'])], axis=1)
+    # df = df.drop(columns=['company_name'], axis=1)
+    return df
 
 def check_null(df):
     return list(df['user_ids'][pd.isnull(df['text_reviews'])])
