@@ -22,6 +22,9 @@ import statsmodels.formula.api as sm
 import pickle
 from sklearn.metrics import f1_score, accuracy_score, precision_score
 from sklearn.metrics import recall_score, roc_curve, roc_auc_score
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import AdaBoostClassifier
+
 
 
 
@@ -61,7 +64,7 @@ def logistic_regression_model(data_path):
 
 
 
-def gradient_boosted_model(data_path):
+def gradient_boosted_model(data_path, i):
     X_no_text_train, X_no_text_test, y_no_text_train, y_no_text_test, \
            X_with_text_train, X_with_text_test, y_with_text_train, y_with_text_test = \
                 train_test_data_splitting_after_KMeans_sub(data_path,  n_groups=6)
@@ -86,6 +89,28 @@ def gradient_boosted_model(data_path):
     no_text_model_score = model1.score(X_no_text_test, y_no_text_test)
     text_model_score = model2.score(X_with_text_test,y_with_text_test)
 
+    fpr_no_text, tpr_no_text, _ = roc_curve(y_no_text_test, y_pred_no_text)
+    roc_auc_no_text = auc(fpr_no_text, tpr_no_text)
+    fpr_with_text, tpr_with_text, _ = roc_curve(y_with_text_test, y_pred_with_text)
+    roc_auc_with_text = auc(fpr_with_text, tpr_with_text)
+    plt.figure()
+    plt.plot(fpr_with_text, tpr_with_text, color='darkorange',
+         lw=lw, label='ROC curve (area = %0.2f)' % roc_auc_with_text)
+    plt.plot(fpr_no_text, tpr_no_text, color='blue',
+         lw=lw, label='ROC curve (area = %0.2f)' % oc_auc_no_text)
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic example')
+    plt.legend(loc="lower right")
+    plt.show()
+    fig_name = 'auc_results/fig_' + i
+    plt.savefig(fig_name)
+
+
+
 
     print('-------GRADIENT BOOSTED-------')
     print('Accuracy Score of the model without text_GradientBoosted: {}'.format(no_text_model_score))
@@ -100,6 +125,7 @@ def gradient_boosted_model(data_path):
     print('recall_score of the model text_GradientBoosted: {}'.format(recall_score(y_with_text_test, model2.predict(X_with_text_test))))
     print('roc_auc_score of the model without text_GradientBoosted: {}'.format(roc_auc_score(y_no_text_test, y_pred_no_text[:,1].reshape(-1,1))))
     print('roc_auc_score of the model text_GradientBoosted: {}'.format(roc_auc_score(y_with_text_test, y_pred_with_text[:,1].reshape(-1,1))))
+
 
 
     return model2
@@ -175,6 +201,78 @@ def decision_tree_model(data_path):
     print('roc_auc_score of the model text_DecisionTree: {}'.format(roc_auc_score(y_with_text_test, y_pred_with_text[:,1].reshape(-1,1))))
 
 
+def NaiveBayes_model(data_path):
+    X_no_text_train, X_no_text_test, y_no_text_train, y_no_text_test, \
+           X_with_text_train, X_with_text_test, y_with_text_train, y_with_text_test = \
+                train_test_data_splitting_after_KMeans_sub(data_path,  n_groups=6)
+
+    X_no_text_train = X_no_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_no_text_test = X_no_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_train = X_with_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_test = X_with_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+
+    model1 = MultinomialNB(alpha=0.1)
+    model2 = MultinomialNB(alpha=0.1)
+
+    model1.fit(X_no_text_train,y_no_text_train)
+    model2.fit(X_with_text_train,y_with_text_train)
+    y_pred_no_text = model1.predict_proba(X_no_text_test)
+    y_pred_with_text = model2.predict_proba(X_with_text_test)
+    no_text_model_score = model1.score(X_no_text_test, y_no_text_test)
+    text_model_score = model2.score(X_with_text_test,y_with_text_test)
+
+    print('-------NAIVE BAYES-------')
+    print('Accuracy Score of the model without text_NaiveBayes: {}'.format(no_text_model_score))
+    print('Accuracy Score of the model with text_NaiveBayes: {}'.format(text_model_score))
+    print('Log loss of the model without text_NaiveBayes: {}'.format(log_loss(y_no_text_test, y_pred_no_text)))
+    print('Log loss of the model with text_NaiveBayes: {}'.format(log_loss(y_with_text_test, y_pred_with_text)))
+    print('f1_score of the model without text_NaiveBayes: {}'.format(f1_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('f1_score of the model text_NaiveBayes: {}'.format(f1_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('precision_score of the model without text_NaiveBayes: {}'.format(precision_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('precision_score of the model text_NaiveBayes: {}'.format(precision_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('recall_score of the model without text_NaiveBayes: {}'.format(recall_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('recall_score of the model text_NaiveBayes: {}'.format(recall_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('roc_auc_score of the model without text_NaiveBayes: {}'.format(roc_auc_score(y_no_text_test, y_pred_no_text[:,1].reshape(-1,1))))
+    print('roc_auc_score of the model text_NaiveBayes: {}'.format(roc_auc_score(y_with_text_test, y_pred_with_text[:,1].reshape(-1,1))))
+
+
+
+def adaboost_model(data_path):
+    X_no_text_train, X_no_text_test, y_no_text_train, y_no_text_test, \
+           X_with_text_train, X_with_text_test, y_with_text_train, y_with_text_test = \
+                train_test_data_splitting_after_KMeans_sub(data_path,  n_groups=6)
+
+    X_no_text_train = X_no_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_no_text_test = X_no_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_train = X_with_text_train.drop(columns = ['Unnamed: 0.1'], axis=1)
+    X_with_text_test = X_with_text_test.drop(columns = ['Unnamed: 0.1'], axis=1)
+
+    model1 = AdaBoostClassifier(learning_rate=0.0001)
+    model2 = AdaBoostClassifier(learning_rate=0.0001)
+
+    model1.fit(X_no_text_train,y_no_text_train)
+    model2.fit(X_with_text_train,y_with_text_train)
+    y_pred_no_text = model1.predict_proba(X_no_text_test)
+    y_pred_with_text = model2.predict_proba(X_with_text_test)
+    no_text_model_score = model1.score(X_no_text_test, y_no_text_test)
+    text_model_score = model2.score(X_with_text_test,y_with_text_test)
+
+    print('-------ADABOOST-------')
+    print('Accuracy Score of the model without text_NaiveBayes: {}'.format(no_text_model_score))
+    print('Accuracy Score of the model with text_NaiveBayes: {}'.format(text_model_score))
+    print('Log loss of the model without text_NaiveBayes: {}'.format(log_loss(y_no_text_test, y_pred_no_text)))
+    print('Log loss of the model with text_NaiveBayes: {}'.format(log_loss(y_with_text_test, y_pred_with_text)))
+    print('f1_score of the model without text_NaiveBayes: {}'.format(f1_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('f1_score of the model text_NaiveBayes: {}'.format(f1_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('precision_score of the model without text_NaiveBayes: {}'.format(precision_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('precision_score of the model text_NaiveBayes: {}'.format(precision_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('recall_score of the model without text_NaiveBayes: {}'.format(recall_score(y_no_text_test, model1.predict(X_no_text_test))))
+    print('recall_score of the model text_NaiveBayes: {}'.format(recall_score(y_with_text_test, model2.predict(X_with_text_test))))
+    print('roc_auc_score of the model without text_NaiveBayes: {}'.format(roc_auc_score(y_no_text_test, y_pred_no_text[:,1].reshape(-1,1))))
+    print('roc_auc_score of the model text_NaiveBayes: {}'.format(roc_auc_score(y_with_text_test, y_pred_with_text[:,1].reshape(-1,1))))
+
+
+
 
 
 def explore_logistic_regression(data_path):
@@ -204,7 +302,7 @@ def explore_logistic_regression(data_path):
     print(result2.summary())
 
 if __name__ == '__main__':
-    data_path = 'temp_data/Jan25_data.csv'
+    data_path = 'temp_data/Feb25_data.csv'
     i = 0
     #explore_logistic_regression(data_path)
     while i <100:
@@ -218,6 +316,8 @@ if __name__ == '__main__':
         #     pickle.dump(gbcmodel, f)
         random_forest_model(data_path)
         decision_tree_model(data_path)
+        adaboost_model(data_path)
+        NaiveBayes_model(data_path)
         print('-------------------------------')
         print('-------------------------------')
         i += 1
