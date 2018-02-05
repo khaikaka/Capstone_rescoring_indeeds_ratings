@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('capstone.html')
+    return render_template('index.html')
 
 @app.route('/recommend', methods=['POST'])
 def recommend():
