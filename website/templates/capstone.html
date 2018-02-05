@@ -96,7 +96,7 @@
   <nav class="navbar navbar-expand-lg bg-success fixed-top text-uppercase text-left text-black" id="mainNav">
     <div class="container">
       <a class="navbar-brand js-scroll-trigger text-black" href="#page-top">We recommend the best fit companies for data scientists</a>
-      <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <!-- <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-black rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         Menu
         <i class="fa fa-bars"></i>
       </button>
@@ -112,32 +112,163 @@
             <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger text-black" href="#contact">Contact</a>
           </li>
         </ul>
-      </div>
+      </div> -->
     </div>
   </nav>
 
 
   <!-- Header -->
-  <header class="masthead bg-secondary text-white text-center">
+  <header class="masthead bg-secondary text-white text-left">
     <div class="container">
-      <h1 class="text-uppercase mb-0">WHAT ARE YOUR IDEAL COMPANIES ?</h1>
+      <!-- <h1 class="text-uppercase mb-0">WHAT ARE YOUR IDEAL COMPANIES ?</h1> -->
+      <!-- <br>
       <br>
       <br>
-      <br>
-      <br>
-      <img class="img-fluid mb-5 d-block mx-auto" src="static/img/profile1.png" alt=""  HEIGHT="300" WIDTH="450">
+      <br> -->
+      <!-- <img class="img-fluid mb-5 d-block mx-auto" src="static/img/profile1.png" alt=""  HEIGHT="300" WIDTH="450"> -->
 
 
       <h2 class="font-weight-light mb-0"></h2>
       <p><span class="hidden"></span></p>
 
+      <div class="container">
+
+        <p><span class="hidden"></span></p>
+          <h3 style="color:white; font-size:40">Please rank 1 (least important) - 5 (most important):</h3>
+          <h3></h3>
+          <p><span class="hidden"></span></p>
+          <br>
+          <br>
+          <br>
+      <table style="width:50%; margin-left:250px;color:white">
+          <tr>
+          </tr>
+          <tr>
+            <th style="width:270; font-size: 19px"><label for="wlb">Work Life Balance</label></th>
+            <th>
+  			<div class="""slidecontainer bg-primary">
+  				<input type="range" min="1" max="5" value="3" class="slider" id="wlb">
+  			</div>
+  		  </th>
+  		  <th>
+  			<p><span id="wlbvalue"></span></p>
+  		  </th>
+          </tr>
+          <tr>
+            <th style="width:270; font-size: 19px"><label for="pbt">Compensation and Benefit</label></th>
+  		  <th style="color:darkslategray">
+  			<div class="""slidecontainer">
+  				<input type="range" min="1" max="5" value="3" class="slider" id="pbt">
+  			</div>
+  		  </th>
+  		  <th>
+  			<p><span id="pbtvalue"></span></p>
+  		  </th>
+          </tr>
+          <tr>
+            <th style="width:270; font-size: 19px"><label for="jsa">Job Security and Advancement</label></th>
+  		  <th>
+  			<div class="""slidecontainer">
+  				<input type="range" min="1" max="5" value="3" class="slider" id="jsa">
+  			</div>
+  		  </th>
+  		  <th>
+  			<p><span id="jsavalue"></span></p>
+  		  </th>
+          </tr>
+          <tr>
+            <th style="width:270; font-size: 19px"><label for="mng">Management</label></th>
+  		  <th>
+  			<div class="""slidecontainer">
+  				<input type="range" min="1" max="5" value="3" class="slider" id="mng">
+  			</div>
+  		  </th>
+  		  <th>
+  			<p><span id="mngvalue"></span></p>
+  		  </th>
+          </tr>
+          <tr>
+            <th style="width:270; font-size: 19px"><label for="cul">Culture</label></th>
+  		  <th style="color:darkslategray">
+  			<div class="""slidecontainer bg-secondary">
+  				<input type="range" min="1" max="5" value="3" color="darkslategray" class="slider" id="cul">
+  			</div>
+  		  <th>
+  			<p><span id="culvalue"></span></p>
+  		  </th>
+          </tr>
+  		<script>
+  		var sliderwlb = document.getElementById("wlb");
+  		var outputwlb = document.getElementById("wlbvalue");
+  		outputwlb.innerHTML = sliderwlb.value;
+
+  		sliderwlb.oninput = function() {
+  		  outputwlb.innerHTML = this.value;
+  		}
+
+  		var sliderpbt = document.getElementById("pbt");
+  		var outputpbt = document.getElementById("pbtvalue");
+  		outputpbt.innerHTML = sliderpbt.value;
+
+  		sliderpbt.oninput = function() {
+  		  outputpbt.innerHTML = this.value;
+  		}
+
+  		var sliderjsa = document.getElementById("jsa");
+  		var outputjsa = document.getElementById("jsavalue");
+  		outputjsa.innerHTML = sliderjsa.value;
+
+  		sliderjsa.oninput = function() {
+  		  outputjsa.innerHTML = this.value;
+  		}
+
+  		var slidermng = document.getElementById("mng");
+  		var outputmng = document.getElementById("mngvalue");
+  		outputmng.innerHTML = slidermng.value;
+
+  		slidermng.oninput = function() {
+  		  outputmng.innerHTML = this.value;
+  		}
+
+  		var slidercul = document.getElementById("cul");
+  		var outputcul = document.getElementById("culvalue");
+  		outputcul.innerHTML = slidercul.value;
+
+  		slidercul.oninput = function() {
+  		  outputcul.innerHTML = this.value;
+  		}
+  		</script>
+    </table>
+
+      </table>
+
+         <br>
+         <br>
+         <table style="width:50%; margin-left:350px;color:white">
+           <tr>
+           <th style="width:250"><button style="margin-left:135px; width:120px;height:55px;font-size:30px; color:darkslategray"; onclick="submit();">Submit!</button></th>
+           </tr>
+   </table>
+
+  <br>
+  <br>
+  <br>
+
+  <br>
+  <br>
+
+
+  <div id="rec"> </div>
+
+
+          </div>
 
     </div>
   </header>
 
 
   <!-- Portfolio Grid Section -->
-  <section class="bg-primary portfolio" id="portfolio">
+  <!--<section class="bg-primary portfolio" id="portfolio">
     <div class="container">
 
       <p><span class="hidden"></span></p>
@@ -273,7 +404,7 @@
 
 <!--Service Section -->
 
-<section class=" portfolio" id="portfolio">
+<!-- <section class=" portfolio" id="portfolio">
   <div class="container">
 
 
@@ -312,11 +443,11 @@
         </a>
       </div>
 
-</section>
+</section> -->
 
 
   <!-- About Section -->
-  <section class="text-black mb-0" id="about">
+  <!-- <section class="text-black mb-0" id="about">
     <div class="container">
       <h2 class="text-center text-uppercase text-white">About</h2>
       <hr class="star-light mb-5">
@@ -335,10 +466,10 @@
         </a>
       </div>
     </div>
-  </section>
+  </section> -->
 
   <!-- Contact Section -->
-  <section id="contact">
+  <!-- <section id="contact">
     <div class="container">
       <h2 class="text-center text-uppercase text-secondary mb-0">Contact Us</h2>
       <hr class="star-dark mb-5">
@@ -346,7 +477,7 @@
         <div class="col-lg-8 mx-auto">
           <!-- To configure the contact form email address, go to mail/contact_me.php and update the email address in the PHP file on line 19. -->
           <!-- The form should work on most web servers, but if the form is not working you may need to configure your web server differently. -->
-          <form name="sentMessage" id="contactForm" novalidate="novalidate">
+          <!-- <form name="sentMessage" id="contactForm" novalidate="novalidate">
             <div class="control-group">
               <div class="form-group floating-label-form-group controls mb-0 pb-2">
                 <label>Name</label>
@@ -384,7 +515,7 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
 
   <!-- Footer -->
   <footer class="footer text-center">
@@ -426,8 +557,8 @@
           </ul>
         </div>
         <div class="col-md-4">
-          <h4 class="text-uppercase mb-4">About Company</h4>
-          <p class="lead mb-0">We are simply the best fortune tellers
+          <h4 class="text-uppercase mb-4">Contact Us</h4>
+          <p class="lead mb-0">hatran84@outlook.com
             </p>
         </div>
       </div>
@@ -450,7 +581,7 @@
   <!-- Portfolio Modals -->
 
   <!-- Portfolio Modal 1 -->
-  <div class="portfolio-modal mfp-hide" id="portfolio-modal-1">
+  <!-- <div class="portfolio-modal mfp-hide" id="portfolio-modal-1">
     <div class="portfolio-modal-dialog bg-white">
       <a class="close-button d-none d-md-block portfolio-modal-dismiss" href="#">
         <i class="fa fa-3x fa-times"></i>
@@ -469,10 +600,10 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <!-- Portfolio Modal 2 -->
-  <div class="portfolio-modal mfp-hide" id="portfolio-modal-2">
+  <!-- <div class="portfolio-modal mfp-hide" id="portfolio-modal-2">
     <div class="portfolio-modal-dialog bg-white">
       <a class="close-button d-none d-md-block portfolio-modal-dismiss" href="#">
         <i class="fa fa-3x fa-times"></i>
@@ -494,7 +625,7 @@
   </div>
 
   <!-- Portfolio Modal 3 -->
-  <div class="portfolio-modal mfp-hide" id="portfolio-modal-3">
+  <!-- <div class="portfolio-modal mfp-hide" id="portfolio-modal-3">
     <div class="portfolio-modal-dialog bg-white">
       <a class="close-button d-none d-md-block portfolio-modal-dismiss" href="#">
         <i class="fa fa-3x fa-times"></i>
@@ -513,7 +644,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> --> -->
 
 
   <!-- Bootstrap core JavaScript -->
@@ -529,7 +660,7 @@
   <script src="js/contact_me.js"></script>
 
   <!-- Custom scripts for this template -->
-  <script src="js/freelancer.min.js"></script>
+  <script src="js/freelancer.min.js"></script> -->
 
 </body>
 
